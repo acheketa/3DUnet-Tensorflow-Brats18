@@ -18,7 +18,7 @@ pip install -r requirements.txt
 ```
 
 ### 2. Data Format
-All data, including the ground truth, must be in 3D NIfTI files (.nii.gz). To convert the DICOM data format of the datathon data to NIfTI, you can either use our data processing pipeline in 'data_preparation.ipynb'. Then, place your train data in the following format and set the path of the train data in `load_3d()` function from `data_loader.py`.
+All data, including the ground truth, must be in 3D NIfTI files (.nii.gz). To convert the DICOM data format of the datathon data to NIfTI, you can use our data processing pipeline in `data_preparation.ipynb`. Then, place your train data in the following format and set the path of the train data in `load_3d()` function from `data_loader.py`.
 ```
 train/
 ├── patientID/
