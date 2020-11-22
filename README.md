@@ -6,7 +6,7 @@
 ## Development
 - Computing environment: CentOS 7, 2 Nvidia Tesla V100 32GB, CUDA 10.1, CuDNN 7.5.0
 - Training time: 3hrs
-- Model file: link
+- Model file: [link](https://drive.google.com/file/d/1CMKKRj-dBMHkZ7u1FgbJUC8aT31eBjGV/view?usp=sharing)
 
 ## Get Started
 
