@@ -13,7 +13,7 @@ from tensorpack import *
 from tensorpack.tfutils.summary import add_moving_summary
 from tensorpack.tfutils.scope_utils import under_name_scope
 from tensorpack.tfutils import optimizer
-from tensorpack.tfutils.common import get_tf_version_number
+from tensorpack.tfutils.common import get_tf_version_tuple as get_tf_version_number
 import tensorpack.utils.viz as tpviz
 from tensorpack.utils.gpu import get_nr_gpu
 import config
@@ -55,13 +55,13 @@ class Unet3dModel(ModelDesc):
         S = config.PATCH_SIZE
         if self.modelType == 'training':
             ret = [
-                tf.placeholder(tf.float32, (config.BATCH_SIZE, S[0], S[1], S[2], 4), 'image'),
+                tf.placeholder(tf.float32, (config.BATCH_SIZE, S[0], S[1], S[2], 1), 'image'),
                 tf.placeholder(tf.float32, (config.BATCH_SIZE, S[0], S[1], S[2], 1), 'weight'),
                 tf.placeholder(tf.float32, (config.BATCH_SIZE, S[0], S[1], S[2], 1), 'label')]
         else:
             S = self.inference_shape
             ret = [
-                tf.placeholder(tf.float32, (config.BATCH_SIZE, S[0], S[1], S[2], 4), 'image')]
+                tf.placeholder(tf.float32, (config.BATCH_SIZE, S[0], S[1], S[2], 1), 'image')]
         return ret
 
     def build_graph(self, *inputs):

@@ -45,9 +45,10 @@ DYNAMIC_SHAPE_PRED = False
 ADVANCE_POSTPROCESSING = True
 BATCH_SIZE = 2
 PATCH_SIZE = [128, 128, 128]
+#PATCH_SIZE = [256, 256, 256]
 INFERENCE_PATCH_SIZE = [128, 128, 128]
 INTENSITY_NORM = 'modality' # different norm method
-STEP_PER_EPOCH = 500
+STEP_PER_EPOCH = 100
 EVAL_EPOCH = 10
 
 # data path
@@ -55,4 +56,4 @@ BASEDIR = "/data/dataset/BRATS2018/" #'/data/dataset/BRATS2018/'
 TRAIN_DATASET = ['training']
 VAL_DATASET = 'val'   # val or val17 
 TEST_DATASET = 'val'
-NUM_CLASS = 4
+NUM_CLASS = 1

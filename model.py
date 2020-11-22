@@ -317,7 +317,6 @@ def dice(prediction, ground_truth, weight_map=None):
     epsilon_denominator = 0.00001
 
     dice_score = dice_numerator / (dice_denominator + epsilon_denominator)
-    
     return 1.0 - tf.reduce_mean(dice_score)
 
 def Loss(feature, weight, gt):
@@ -335,10 +334,12 @@ def Loss(feature, weight, gt):
         if w.shape.as_list()[-1] == 1:
             w = tf.squeeze(w, axis=-1) # (nvoxel, )
         f = tf.nn.softmax(f)
-        loss_per_batch = dice(f, g, weight_map=w)
+        g = tf.expand_dims(g, axis=1)
+        #loss_per_batch = dice(f, g)
         #loss_per_batch = cross_entropy(f, g, weight_map=w)
+        loss_per_batch = tf.nn.softmax_cross_entropy_with_logits(labels=g, logits=f)
         losses.append(loss_per_batch)
-    return tf.reduce_mean(losses, name="dice_loss")
+    return tf.reduce_mean(losses, name="cross_entropy_loss")  # change names
 
     
 if __name__ == "__main__":

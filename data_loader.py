@@ -8,7 +8,7 @@ from termcolor import colored
 from tabulate import tabulate
 
 from tensorpack.utils import logger
-from tensorpack.utils.rect import FloatBox
+from rect import FloatBox
 from tensorpack.utils.timer import timed_operation
 from tensorpack.utils.argtools import log_once
 
@@ -63,17 +63,20 @@ class BRATS_SEG(object):
         dataset_mode: HGG/LGG/ALL
         return list(dict[patient_id][modality] = filename.nii.gz)
         """
+        self.basedir = '/home/centos/3D_segmentation/'
         print("Data Folder: ", self.basedir)
 
-        modalities = ['flair', 't1ce', 't1.', 't2']
+        #modalities = ['flair', 't1ce', 't1.', 't2']
+        modalities = ['ct']
         
-        if 'training' in self.basedir:
-            img_HGG = glob.glob(self.basedir+"/HGG/*")
-            img_LGG = glob.glob(self.basedir+"/LGG/*")
-            imgs = img_HGG + img_LGG
+        if True:
+            #img_HGG = glob.glob(self.basedir+"/HGG/*")
+            #img_LGG = glob.glob(self.basedir+"/LGG/*")
+            #imgs = img_HGG + img_LGG
+            imgs = glob.glob(self.basedir+"nii/*")
         else:
             imgs = glob.glob(self.basedir+"/*")
-        imgs = [x for x in imgs if 'survival_evaluation.csv' not in x]
+        #imgs = [x for x in imgs if 'survival_evaluation.csv' not in x]
         
         patient_ids = [x.split("/")[-1] for x in imgs]
         ret = []
@@ -85,16 +88,15 @@ class BRATS_SEG(object):
             data['id'] = patient_ids[idx]
             # read modality
             mod = glob.glob(file_name+"/*.nii*")
-            assert len(mod) >= 4, '{}'.format(file_name)  # 4mod +1gt
+            data['gt'] = glob.glob(self.basedir + "mask_nii/" + file_name.split('/')[-1] + "*.nii*")[0]
+            #assert len(mod) >= 4, '{}'.format(file_name)  # 4mod +1gt
             for m in mod:
-                if 'seg' in m:
-                    data['gt'] = m
-                else:
-                    _m = m.split("/")[-1].split(".")[0].split("_")[-1]
-                    data['image_data'][_m] = m
+                _m = m.split("/")[-1].split("_")[0]
+                data['image_data']['ct'] = m
             
             if 'gt' in data:
-                if not config.NO_CACHE and not 'training' in self.basedir:
+                if True:
+                #if not config.NO_CACHE and not 'training' in self.basedir:
                     data['preprocessed'] = crop_brain_region(data['image_data'], data['gt'])
                     del data['image_data']
                     del data['gt']
@@ -124,7 +126,7 @@ class BRATS_SEG(object):
         return ret
 
 if __name__ == '__main__':
-    brats2018 = BRATS_SEG("/data/dataset/BRATS2018/", "training")
+    brats2018 = BRATS_SEG("/home/centos/3D_segmentation/", "training")
     brats2018 = brats2018.load_3d()
     print(len(brats2018))
     print(brats2018[0])

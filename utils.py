@@ -50,7 +50,9 @@ def crop_brain_region(im, gt, with_gt=True):
         label = load_nifty_volume_as_array(gt, False)
         label[label == 4] = 3
         label = crop_ND_volume_with_bounding_box(label, bbmin, bbmax)
-
+        z,h,w = volume_list[0].shape
+        volume_list = [volume_list[0][(z-270):(z-14),:256,:]]
+        label = label[(z-270):(z-14),:256,:]
         return volume_list, label, weight, original_shape, [bbmin, bbmax]
     else:
         return volume_list, None, weight, original_shape, [bbmin, bbmax]

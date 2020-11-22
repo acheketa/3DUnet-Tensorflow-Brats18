@@ -228,7 +228,7 @@ def get_train_dataflow(add_mask=True):
     ds = DataFromList(imgs, shuffle=True)
     
     def preprocess(data):
-        if config.NO_CACHE:
+        if False:#config.NO_CACHE:
             fname, gt, im = data['file_name'], data['gt'], data['image_data']
             volume_list, label, weight, _, _ = crop_brain_region(im, gt)
             batch = sampler3d(volume_list, label, weight)

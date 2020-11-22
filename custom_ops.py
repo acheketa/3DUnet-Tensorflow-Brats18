@@ -15,7 +15,7 @@ import functools
 from tensorpack.utils import logger
 from tensorpack.utils.argtools import get_data_format
 from tensorpack.tfutils.tower import get_current_tower_context
-from tensorpack.tfutils.common import get_tf_version_number
+from tensorpack.tfutils.common import get_tf_version_tuple as get_tf_version_number
 from tensorpack.tfutils.collection import backup_collection, restore_collection
 from tensorpack import layer_register, VariableHolder
 from tensorpack.tfutils.varreplace import custom_getter_scope
@@ -36,7 +36,7 @@ def InstanceNorm5d(x, epsilon=1e-5, use_affine=True, gamma_init=None, data_forma
         epsilon (float): avoid divide-by-zero
         use_affine (bool): whether to apply learnable affine transformation
     """
-    data_format = get_data_format(data_format, tfmode=False)
+    data_format = get_data_format(data_format, keras_mode=False)
     shape = x.get_shape().as_list()
     # assert len(shape) == 4, "Input of InstanceNorm has to be 4D!"
     if len(shape) == 5:
@@ -273,6 +273,7 @@ def BatchNorm3d(inputs, axis=None, training=None, momentum=0.9, epsilon=1e-5,
         training = ctx.is_training
     training = bool(training)
     TF_version = get_tf_version_number()
+    TF_version = '.'.join([str(x) for x in TF_version])
     if not training and ctx.is_training:
         assert TF_version >= 1.4, \
             "Fine tuning a BatchNorm model with fixed statistics is only " \
