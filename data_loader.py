@@ -63,22 +63,18 @@ class BRATS_SEG(object):
         dataset_mode: HGG/LGG/ALL
         return list(dict[patient_id][modality] = filename.nii.gz)
         """
-        self.basedir = '/home/centos/3D_segmentation/'
         print("Data Folder: ", self.basedir)
 
         #modalities = ['flair', 't1ce', 't1.', 't2']
         modalities = ['ct']
         
-        if True:
-            #img_HGG = glob.glob(self.basedir+"/HGG/*")
-            #img_LGG = glob.glob(self.basedir+"/LGG/*")
-            #imgs = img_HGG + img_LGG
-            imgs = glob.glob(self.basedir+"nii/*")
+        if self.mode == 'test':
+            imgs  = [self.basedir]
+            patient_ids = ['test' for x in imgs]
         else:
-            imgs = glob.glob(self.basedir+"/*")
-        #imgs = [x for x in imgs if 'survival_evaluation.csv' not in x]
+            imgs = glob.glob(self.basedir + "/*")
+            patient_ids = [x.split("/")[-1] for x in imgs]
         
-        patient_ids = [x.split("/")[-1] for x in imgs]
         ret = []
         print("Preprocessing Data ...")
         for idx, file_name in tqdm(enumerate(imgs), total=len(imgs)):
@@ -88,7 +84,6 @@ class BRATS_SEG(object):
             data['id'] = patient_ids[idx]
             # read modality
             mod = glob.glob(file_name+"/*.nii*")
-            data['gt'] = glob.glob(self.basedir + "mask_nii/" + file_name.split('/')[-1] + "*.nii*")[0]
             #assert len(mod) >= 4, '{}'.format(file_name)  # 4mod +1gt
             for m in mod:
                 _m = m.split("/")[-1].split("_")[0]
@@ -97,6 +92,7 @@ class BRATS_SEG(object):
             if 'gt' in data:
                 if True:
                 #if not config.NO_CACHE and not 'training' in self.basedir:
+                    data['gt'] = glob.glob(os.path.join(self.basedir, "mask_nii/") + file_name.split('/')[-1] + "*.nii*")[0]
                     data['preprocessed'] = crop_brain_region(data['image_data'], data['gt'])
                     del data['image_data']
                     del data['gt']
@@ -126,7 +122,7 @@ class BRATS_SEG(object):
         return ret
 
 if __name__ == '__main__':
-    brats2018 = BRATS_SEG("/home/centos/3D_segmentation/", "training")
+    brats2018 = BRATS_SEG("./data", "test")
     brats2018 = brats2018.load_3d()
     print(len(brats2018))
     print(brats2018[0])

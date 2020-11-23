@@ -50,39 +50,45 @@ def post_processing(pred1, temp_weight):
 
 def batch_segmentation(temp_imgs, model_func, data_shape=[19, 180, 160]):
     batch_size = config.BATCH_SIZE
-    data_channel = 4
+    data_channel = 1
     class_num = config.NUM_CLASS
     image_shape = temp_imgs[0].shape
     label_shape = [data_shape[0], data_shape[1], data_shape[2]]
     D, H, W = image_shape
     input_center = [int(D/2), int(H/2), int(W/2)]
     temp_prob1 = np.zeros([D, H, W, class_num])
+    print("Here1")
 
     sub_image_batches = []
     for center_slice in range(int(label_shape[0]/2), D + int(label_shape[0]/2), label_shape[0]):
         center_slice = min(center_slice, D - int(label_shape[0]/2))
         sub_image_batch = []
+        print("Here2")
         for chn in range(data_channel):
             temp_input_center = [center_slice, input_center[1], input_center[2]]
             sub_image = extract_roi_from_volume(
                             temp_imgs[chn], temp_input_center, data_shape, fill="zero")
             sub_image_batch.append(sub_image)
+            print("Here3")
         sub_image_batch = np.asanyarray(sub_image_batch, np.float32) #[4,180,160]
         sub_image_batches.append(sub_image_batch) # [14,4,d,h,w]
     
     total_batch = len(sub_image_batches)
     max_mini_batch = int((total_batch+batch_size-1)/batch_size)
     sub_label_idx1 = 0
+    print("Here4")
     for mini_batch_idx in range(max_mini_batch):
         data_mini_batch = sub_image_batches[mini_batch_idx*batch_size:
                                       min((mini_batch_idx+1)*batch_size, total_batch)]
+        print("Here5")
         if(mini_batch_idx == max_mini_batch - 1):
             for idx in range(batch_size - (total_batch - mini_batch_idx*batch_size)):
                 data_mini_batch.append(np.zeros([data_channel] + data_shape))
                 # data_mini_batch.append(np.random.normal(0, 1, size = [data_channel] + data_shape))
         data_mini_batch = np.asarray(data_mini_batch, np.float32)
-        data_mini_batch = np.transpose(data_mini_batch, [0, 2, 3, 4, 1])
+        data_mini_batch1 = np.transpose(data_mini_batch, [0, 2, 3, 4, 1])
         prob_mini_batch1, _ = model_func(data_mini_batch)
+        print("Here6")
         
         for batch_idx in range(prob_mini_batch1.shape[0]):
             center_slice = sub_label_idx1*label_shape[0] + int(label_shape[0]/2)
@@ -91,6 +97,7 @@ def batch_segmentation(temp_imgs, model_func, data_shape=[19, 180, 160]):
             sub_prob = np.reshape(prob_mini_batch1[batch_idx], label_shape + [class_num])
             temp_prob1 = set_roi_to_volume(temp_prob1, temp_input_center, sub_prob)
             sub_label_idx1 = sub_label_idx1 + 1
+            print("Here7")
     
     return temp_prob1
 

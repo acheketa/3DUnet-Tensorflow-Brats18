@@ -43,17 +43,17 @@ TEST_FLIP = False
 DYNAMIC_SHAPE_PRED = False
 # change PATCH_SIZE in inference if cropped brain region > PATCH_SIZE
 ADVANCE_POSTPROCESSING = True
-BATCH_SIZE = 2
+BATCH_SIZE = 1
 PATCH_SIZE = [128, 128, 128]
 #PATCH_SIZE = [256, 256, 256]
-INFERENCE_PATCH_SIZE = [128, 128, 128]
+INFERENCE_PATCH_SIZE = [512, 512, 512]
 INTENSITY_NORM = 'modality' # different norm method
 STEP_PER_EPOCH = 100
 EVAL_EPOCH = 10
 
 # data path
-BASEDIR = "/data/dataset/BRATS2018/" #'/data/dataset/BRATS2018/'
+BASEDIR = "./data/" # /home/centos/3D_segmentation/
 TRAIN_DATASET = ['training']
 VAL_DATASET = 'val'   # val or val17 
-TEST_DATASET = 'val'
+TEST_DATASET = 'test'
 NUM_CLASS = 1
